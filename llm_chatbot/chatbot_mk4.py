@@ -37,7 +37,6 @@ while True:
         choice = random.choice(sample_titles)
         query = choice
         print(choice)
-        break
 
     relavence = evaluator(query, script_db)
     print(relavence[0])
@@ -84,7 +83,7 @@ if query:
         print(chunk, end="", flush=True)
 
     while True:
-        print("========================")
+        print("\n========================\n")
         query = input("반응을 입력하세요.")
         if query.lower() == "exit":
             print("대화를 종료합니다.")
