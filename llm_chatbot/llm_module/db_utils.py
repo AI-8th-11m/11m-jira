@@ -1,10 +1,10 @@
 import os
 import openai
 import warnings
-from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_ollama import OllamaEmbeddings
 from langchain_core.documents import Document
+from langchain_community.vectorstores import Chroma
 
 openai.api_key = os.environ.get("MY_OPENAI_API_KEY")
 # EMBED = OllamaEmbeddings(model="nomic-embed-text")

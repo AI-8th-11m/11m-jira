@@ -1,5 +1,8 @@
 import os
+import time
 import openai
+import random
+import threading
 from openai import OpenAI
 from langchain_openai import ChatOpenAI
 from langchain_core.documents import Document
@@ -87,6 +90,26 @@ def generate_script(summaries):
 
 def script_maker(INPUT: str):
     print("다소 시간이 소요될 수 있습니다.")
+    messages = [
+        "처리 중...",
+        "잠시만 기다려주세요.",
+        "계속 진행 중입니다.",
+        "몇 초 후에 완료됩니다.",
+        "끝나가고 있어요.",
+    ]
+
+    # 메시지를 랜덤으로 출력하는 함수 (백그라운드에서 실행)
+    def print_random_messages(stop_event):
+        while not stop_event.is_set():  # stop_event가 set될 때까지 메시지를 계속 출력
+            print(random.choice(messages))
+            time.sleep(20)  # 1초마다 메시지를 출력
+
+    stop_event = threading.Event()
+    message_thread = threading.Thread(
+        target=print_random_messages, args=(stop_event,), daemon=True
+    )
+    message_thread.start()
+
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=1000, chunk_overlap=100
     )
@@ -103,4 +126,7 @@ def script_maker(INPUT: str):
     documents = [Document(page_content=docs)]
     SPLITS = text_splitter.split_documents(documents)
     refined = documents_filter(SPLITS)
-    return generate_script(refined)
+    new_script = generate_script(refined)
+
+    stop_event.set()
+    return new_script

@@ -14,10 +14,10 @@ titles = title_json_data(json_files)
 sample_titles = titles[0:11]
 
 store = {}
-ID = "test30"
-LANG_CODE = "jpn_Jpan"
-# LANG_CODE = False
-LANG = "Japanese"
+ID = "test31"
+# LANG_CODE = "jpn_Jpan"
+LANG_CODE = False
+LANG = "korean"
 
 
 while True:
@@ -59,7 +59,7 @@ while True:
         elif user_input.lower() == "create":
             text_input = input("URL 또는 텍스트를 입력해주세요.")
             new_script = script_maker(text_input)
-            add_to_vstore(new_script)
+            add_to_vstore(new_script, script_db)
             print("생성이 완료되었습니다.", "다시 답변해주세요.")
             continue
 
@@ -73,14 +73,15 @@ while True:
 if query:
     chain = chain_maker(script, LANG)
     h_chain = history_chain(chain, store)
-    response = h_chain.invoke(
+    response = h_chain.stream(
         # 질문 입력
         {"question": query},
         # 세션 ID 기준으로 대화를 기록합니다.
         config={"configurable": {"session_id": ID}},
     )
     print("\n답변:")
-    print(response)
+    for chunk in response:
+        print(chunk, end="", flush=True)
 
     while True:
         print("========================")
@@ -88,7 +89,7 @@ if query:
         if query.lower() == "exit":
             print("대화를 종료합니다.")
             break
-        response = h_chain.invoke(
+        response = h_chain.stream(
             # 질문 입력
             {"question": query},
             # 세션 ID 기준으로 대화를 기록합니다.
@@ -99,4 +100,5 @@ if query:
         else:
             print(query)
         print("\n답변:")
-        print(response)
+        for chunk in response:
+            print(chunk, end="", flush=True)
