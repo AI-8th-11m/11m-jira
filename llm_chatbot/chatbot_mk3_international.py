@@ -14,10 +14,10 @@ titles = title_json_data(json_files)
 sample_titles = titles[0:11]
 
 store = {}
-ID = "test30"
-LANG_CODE = "jpn_Jpan"
-# LANG_CODE = False
-LANG = "Japanese"
+ID = "test31"
+# LANG_CODE = "jpn_Jpan"
+LANG_CODE = False
+LANG = "korean"
 
 
 while True:
@@ -59,7 +59,7 @@ while True:
         elif user_input.lower() == "create":
             text_input = input("URL 또는 텍스트를 입력해주세요.")
             new_script = script_maker(text_input)
-            add_to_vstore(new_script)
+            add_to_vstore(new_script, script_db)
             print("생성이 완료되었습니다.", "다시 답변해주세요.")
             continue
 
