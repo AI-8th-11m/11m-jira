@@ -73,14 +73,15 @@ while True:
 if query:
     chain = chain_maker(script, LANG)
     h_chain = history_chain(chain, store)
-    response = h_chain.invoke(
+    response = h_chain.stream(
         # 질문 입력
         {"question": query},
         # 세션 ID 기준으로 대화를 기록합니다.
         config={"configurable": {"session_id": ID}},
     )
     print("\n답변:")
-    print(response)
+    for chunk in response:
+        print(chunk, end="", flush=True)
 
     while True:
         print("========================")
@@ -88,7 +89,7 @@ if query:
         if query.lower() == "exit":
             print("대화를 종료합니다.")
             break
-        response = h_chain.invoke(
+        response = h_chain.stream(
             # 질문 입력
             {"question": query},
             # 세션 ID 기준으로 대화를 기록합니다.
@@ -99,4 +100,5 @@ if query:
         else:
             print(query)
         print("\n답변:")
-        print(response)
+        for chunk in response:
+            print(chunk, end="", flush=True)
