@@ -7,10 +7,18 @@ st.write(
     "대화를 시작하고 싶으시다면, 채팅을 시작해주세요."
 )
 
+#Streamlit 앱이 다시 로드될 때 상태를 유지하거나 초기화
+if "user_name" not in st.session_state:
+    st.session_state.user_name = "Guest"
+name = st.text_input("Your Name:", st.session_state.user_name)
+if st.button("Save Name"):
+    st.session_state.user_name = name
+st.write(f"Hello, {st.session_state.user_name}!")
+
 
 #챗봇 만들기
 if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []  #채팅 남겨지는(히스토리)
+    st.session_state.chat_history = []  
 
 for content in st.session_state.chat_history:
     with st.chat_message(content["role"]):
