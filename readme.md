@@ -32,37 +32,39 @@
 
 ---
 
+
 ## 설치 및 실행방법
 
-**1. Python 버전**
+### 1. Python 버전
 - Python 3.8.20 이상이 필요합니다.
 
-**2. 프로젝트 클론**
+### 2. 프로젝트 클론
 프로젝트를 로컬 환경으로 복사합니다:
-`
+``` bash
 git clone https://github.com/AI-8th-11m/11m-jira
-`
-**3-1. 가상환경 생성 및 활성화(macOS/Linux)**
+```
+
+### 3-1. 가상환경 생성 및 활성화 (macOS/Linux)
 ```
 python -m venv venv
 source venv/bin/activate
 ```
 
-**3-2. 가상환경 생성 및 활성화(Windows)**
+### 3-2. 가상환경 생성 및 활성화 (Windows)
 ```
 python -m venv venv
 venv\Scripts\activate
 ```
 
-**4. 필요 라이브러리 설치**
-`
+### 4. 필요 라이브러리 설치
+```
 pip install -r requirements.txt
-`
+```
 
-**5. 챗봇 실행**
-`
+### 5. 챗봇 실행
+```
 streamlit run app.py
-`
+```
 streamlit 서버가 실행되면 브라우저에서 챗봇과 대화를 시작할 수 있습니다.
 
 ---
