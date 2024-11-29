@@ -106,7 +106,7 @@ def chain_maker(script, language='korean'):
     give reaction to answer,
     do not use same reaction or same question,
     end of the script give no question and wrap up the story,
-    notice if story finished and give message '종료하려면 exit'
+    notice if story finished and give message '종료하려면 버튼을 클릭해주세요.'
 
     # script
     {script}

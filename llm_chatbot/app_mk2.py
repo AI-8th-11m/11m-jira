@@ -18,8 +18,7 @@ db_name = "script_db"
 script_db = load_vstore(db_name, path)
 LANG_CODE = False
 
-if "history" not in st.session_state:
-    st.session_state["history"] = {}
+
 if "session_list" not in st.session_state:
     st.session_state["session_list"] = []
 if "current_session_id" not in st.session_state:
@@ -119,17 +118,15 @@ def check_page():
         status.update(label="확인이 끝났습니다!", state="complete", expanded=False)
 
         if relavence[0] < 80:
-            st.write("모르는 이야기입니다.")
-            st.write("종료 : exit, 다시 물어보기 : return, 생성하기 : create")
-
-            user_input = st.text_input("입력하세요.")
-            if user_input.lower() == "exit":
+            query = st.selectbox("모르는 이야기입니다.", options= ['종료, 돌아가기, 생성하기', "exit", "retry", "create"])
+            if query.lower() == "exit":
                 st.session_state.page = "settings"  # 세팅 페이지로 이동
                 st.rerun()
-            elif user_input.lower() == "return":
-                st.session_state.page = "check"  # 체크 페이지로 돌아감
-                st.rerun()
-            elif user_input.lower() == "create":
+            elif query.lower() == "retry":
+                query = st.text_input("더 자세히 설명해 주세요.", placeholder="예 : 강다니엘 이모 사건")
+                if query:
+                    st.rerun()
+            elif query.lower() == "create":
                 st.session_state.page = "create"  # 생성 페이지로 이동
                 st.rerun()
 
@@ -151,6 +148,11 @@ def create_page():
     st.title("생성 페이지")
     st.write("새로운 스크립트를 입력할 수 있습니다.")
 
+    if st.button("돌아가기"):
+        st.session_state.page = "check"
+        time.sleep(1)
+        st.rerun()
+
     text_input = st.text_area("URL 또는 텍스트를 입력해주세요.")
     if text_input:
         with st.status("스크립트를 생성중입니다...", expanded=True) as status:
@@ -161,19 +163,14 @@ def create_page():
             st.write("창작의 고통을 느끼는 중...")
             new_script = script_maker(text_input)
             st.write(f"생성된 스크립트: {new_script}")
-            st.write("DB에 추가합니다...")
             time.sleep(2)
-            script_db = load_vstore("script_db", "./llm_chatbot/db/script_db")
-            add_to_vstore(new_script, script_db)
             status.update(
                 label="작업이 종료되었습니다.", state="complete", expanded=False
             )
-
-    if st.button("돌아가기"):
-        st.session_state.page = "check"
-        time.sleep(1)
-        st.rerun()
-
+        user_input = st.selectbox("DB에 저장하시겠습니까?", options= ['아니오', '예'])
+        if user_input == '예':
+            script_db = load_vstore("script_db", "./llm_chatbot/db/script_db")
+            add_to_vstore(new_script, script_db)
 
 def chat_page(script):
     st.title("채팅 페이지")
@@ -182,7 +179,7 @@ def chat_page(script):
     LANG = st.session_state.get("LANG")
     QUERY = st.session_state.get("query")
     if "messages" not in st.session_state:
-        init_history = [{"role": "assistant", "content": 'no history yet'}]
+        init_history = [{"role": "assistant", "content": "no history yet"}]
         chain = streamlit_chain(script, init_history, LANG)
         init_response = chain.invoke(
             {"question": QUERY},
@@ -196,7 +193,9 @@ def chat_page(script):
     if prompt := st.chat_input():
         if prompt.lower() == "exit":
             st.write("대화를 종료합니다.")
-            st.session_state["conversation"][f"{ID}_history"] = st.session_state["messages"]
+            st.session_state["conversation"][f"{ID}_history"] = st.session_state[
+                "messages"
+            ]
             st.session_state["conversation"][f"{ID}_script"] = script
             del st.session_state["messages"]
             st.session_state.page = "settings"
@@ -209,8 +208,8 @@ def chat_page(script):
         prompt = stream_data(prompt)
         st.chat_message("user").write_stream(prompt)
 
-        history = st.session_state['messages']
-        chain= streamlit_chain(script, history, LANG)
+        history = st.session_state["messages"]
+        chain = streamlit_chain(script, history, LANG)
         msg = chain.invoke(
             {"question": prompt},
             config={"configurable": {"session_id": ID}},
@@ -234,6 +233,10 @@ def session_page():
     LANG = st.session_state.get("LANG")
     st.title(f"{ID}페이지")
     st.write("다시 채팅을 시작할 수 있습니다.")
+
+    if f"{ID}_history" not in st.session_state["conversation"]:
+        st.session_state.page = "check"
+        st.rerun()
 
     st.session_state["messages"] = st.session_state["conversation"][f"{ID}_history"]
     script = st.session_state["conversation"][f"{ID}_script"]
@@ -287,4 +290,3 @@ elif st.session_state.page == "chat":
     chat_page(st.session_state.script)
 elif st.session_state.page == "session_page":
     session_page()
-
