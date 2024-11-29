@@ -91,6 +91,16 @@ def generate_script(summaries):
 
 
 def script_maker(INPUT: str):
+    """
+    사용자가 입력한 데이터로
+    대화 LLM이 전달할 이야기의 대본 생성
+
+    Parameters:
+        INPUT : URL 또는 텍스트 데이터
+
+    Returns:
+        텍스트 데이터
+    """
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=1000, chunk_overlap=100
     )

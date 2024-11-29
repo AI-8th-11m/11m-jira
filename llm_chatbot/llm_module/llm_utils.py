@@ -142,7 +142,7 @@ def chain_maker(script, language='korean'):
 
 def history_chain(chain, memory_store: dict):
     """
-    맥락을 유지하면 대화하는 chain 생성
+    맥락을 유지하면서 대화하는 chain 생성
 
     Parameters:
         chain : script 를 찾아 답변하는 chain
@@ -150,7 +150,6 @@ def history_chain(chain, memory_store: dict):
     Returns:
         memory history chain
     """
-
     def get_session_history(session_ids):
         if session_ids not in memory_store:  # 세션 ID가 store에 없는 경우
             # 새로운 ChatMessageHistory 객체를 생성하여 store에 저장
@@ -167,16 +166,27 @@ def history_chain(chain, memory_store: dict):
     return rag_with_history
 
 def stream_data(text):
+    """
+    strealit 환경 st.write_stream() 메서드와 사용
+    텍스트 출력을 스트림 형식으로 변환하는 함수
+
+    Parameters:
+        text : 스트림 형식으로 출력할 텍스트
+    Returns:
+        memory history chain
+    """
     for word in text.split(" "):  # 공백 기준으로 문장을 단어 단위로 나누기
         yield word + " "
         time.sleep(0.2)
 
 def streamlit_chain(script, history, language='korean'):
     """
-    스크립트를 바탕으로 대화를 이어나가는 llm chain 생성
+    streamlit 환경에서 대화 맥락을 유지하여 이야기를 이어나가는 chain 생성
 
     Parameters:
         script : 선택된 스크립트
+        history : st.session.state['history'] = [{'role' : 'role_value', 'content' : 'content_value'}] 형식
+        language : 사용할 언어
     Returns:
         llm chain
     """
