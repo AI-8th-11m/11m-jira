@@ -240,7 +240,6 @@ def chat_page(script):
         st.chat_message("assistant").write_stream(msg)
 
     if st.button("대화 종료"):
-        st.session_state.page = "messages"
         st.session_state["conversation"][f"{ID}_history"] = st.session_state["messages"]
         st.session_state["conversation"][f"{ID}_script"] = script
         del st.session_state["messages"]
@@ -294,7 +293,6 @@ def session_page():
         st.chat_message("assistant").write_stream(msg)
 
     if st.button("대화 종료"):
-        st.session_state.page = "messages"
         st.session_state["conversation"][f"{ID}_history"] = st.session_state["messages"]
         st.session_state["conversation"][f"{ID}_script"] = script
         del st.session_state["messages"]
