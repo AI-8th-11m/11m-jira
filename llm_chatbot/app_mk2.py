@@ -1,11 +1,16 @@
-from llm_module.docs_utils import *
-from llm_module.db_utils import *
-from llm_module.script_utils import *
-from llm_module.llm_utils import *
-from llm_module.translator_module import translator
-import random
 import time
+import random
 import streamlit as st
+from llm_module.db_utils import *
+from llm_module.llm_utils import *
+from llm_module.docs_utils import *
+from llm_module.script_utils import *
+from llm_module.translator_module import translator
+
+#########
+# DB 및 데이터 세팅
+#########
+
 
 json_files = [
     "./llm_chatbot/documents/filtered_unsolved_cases.json",
@@ -18,6 +23,9 @@ db_name = "script_db"
 script_db = load_vstore(db_name, path)
 LANG_CODE = False
 
+#########
+# 세션 세팅 : 앱이 동작하는 동안 유지될 정보들 보관
+#########
 
 if "session_list" not in st.session_state:
     st.session_state["session_list"] = []
@@ -28,12 +36,16 @@ if "title_list_expanded" not in st.session_state:
 if "conversation" not in st.session_state:
     st.session_state["conversation"] = {}
 
+#########
+# 사이드바 : 제목 리스트, 세션 리스트
+#########
 
 st.sidebar.title("사이드바 메뉴")
-
-
 main_option = st.sidebar.selectbox("메뉴를 선택하세요", ["제목 리스트", "세션 리스트"])
 
+#########
+# 제목 리스트 : 사용 가능한 스크립트 리스트
+#########
 
 if main_option == "제목 리스트":
 
@@ -50,6 +62,10 @@ if main_option == "제목 리스트":
     else:
         st.sidebar.write("제목 리스트를 펼치려면 버튼을 클릭하세요.")
 
+#########
+# 세션 리스트 : 현재 세션 표시 기능, 세션 생성 시 저장, 클릭으로 대화 내용 호출 및 이어가기
+#########
+
 elif main_option == "세션 리스트":
     st.sidebar.subheader(f"**현재 세션 ID:** {st.session_state['current_session_id']}")
     st.sidebar.subheader("세션 리스트")
@@ -61,13 +77,10 @@ elif main_option == "세션 리스트":
             st.session_state.page = "session_page"
             st.rerun()
 
+#########
+# 세팅 페이지 : 세션 ID, 사용 언어 설정 / 세션 ID : 대화를 구분할 ID
+#########
 
-# session_id = 'test'
-# st.session_state.session_id = session_id
-# st.session_state['current_session_id'] = st.session_state.session_id
-
-
-# 세팅 페이지 구현
 def setting_page():
     st.title("유저 설정 화면")
 
@@ -85,11 +98,14 @@ def setting_page():
             st.session_state["session_list"].append({"id": session_id})
             st.session_state.LANG = language
             st.session_state.current_session = session_id
-            st.session_state.page = "check"  # 체크 페이지로 이동
+            st.session_state.page = "check"  
             st.rerun()
         else:
             st.warning("세션 ID를 입력해주세요!")
 
+#########
+# 체크 페이지 : 스크립트를 검색, 사용자 입력과 검색된 스크립트의 연관성검사, 결과에 따라 페이지 이동
+#########
 
 # 점수 구간 설정
 MIN_SCORE = 80
@@ -100,8 +116,6 @@ NEXT_SCORE = 95
 if "score" not in st.session_state:
     st.session_state.score = 0
 
-
-# 체크 페이지 구현
 def check_page():
     st.title("체크 페이지")
     query = st.text_input("어떤 이야기가 듣고 싶으신가요?", placeholder="예 : 아무거나")
@@ -120,14 +134,14 @@ def check_page():
         if relavence[0] < 80:
             query = st.selectbox("모르는 이야기입니다.", options= ['종료, 돌아가기, 생성하기', "exit", "retry", "create"])
             if query.lower() == "exit":
-                st.session_state.page = "settings"  # 세팅 페이지로 이동
+                st.session_state.page = "settings"
                 st.rerun()
             elif query.lower() == "retry":
                 query = st.text_input("더 자세히 설명해 주세요.", placeholder="예 : 강다니엘 이모 사건")
                 if query:
                     st.rerun()
             elif query.lower() == "create":
-                st.session_state.page = "create"  # 생성 페이지로 이동
+                st.session_state.page = "create"
                 st.rerun()
 
         elif relavence[0] < 95 and relavence[0] >= 80:
@@ -136,14 +150,18 @@ def check_page():
 
         elif relavence[0] >= 95:
             script = relavence[1]
-            st.session_state.page = "chat"  # 채팅 페이지로 이동
+            st.session_state.page = "chat"
             st.session_state.query = query
             st.session_state.script = script
             time.sleep(1)
             st.rerun()
 
 
-# 생성 페이지 구현
+#########
+# 생성 페이지 : 사용자 정의 스크립트 생성, 저장여부 확인 후 DB에 반영
+#########
+
+
 def create_page():
     st.title("생성 페이지")
     st.write("새로운 스크립트를 입력할 수 있습니다.")
@@ -172,6 +190,11 @@ def create_page():
             script_db = load_vstore("script_db", "./llm_chatbot/db/script_db")
             add_to_vstore(new_script, script_db)
 
+
+#########
+# 채팅 페이지 : 체크 페이지에서 찾은 스크립트를 기반으로 이야기 전달, 종료 시 conversation 세션에 대화 내용과 사용한 스크립트 저장
+#########
+
 def chat_page(script):
     st.title("채팅 페이지")
     st.write("이제 채팅을 시작할 수 있습니다.")
@@ -193,9 +216,7 @@ def chat_page(script):
     if prompt := st.chat_input():
         if prompt.lower() == "exit":
             st.write("대화를 종료합니다.")
-            st.session_state["conversation"][f"{ID}_history"] = st.session_state[
-                "messages"
-            ]
+            st.session_state["conversation"][f"{ID}_history"] = st.session_state["messages"]
             st.session_state["conversation"][f"{ID}_script"] = script
             del st.session_state["messages"]
             st.session_state.page = "settings"
@@ -226,6 +247,11 @@ def chat_page(script):
         st.session_state.page = "settings"
         time.sleep(1)
         st.rerun()
+
+#########
+# 세션 페이지 : 세션 리스트에서 클릭으로 이동, 세션 ID를 기준으로 저장된 대화 내용과 스크립트를 호출 해 대화를 이어나감
+## 저장된 내용이 없는 경우 체크 페이지로 이동하여 스크립트 선택
+#########
 
 
 def session_page():
@@ -276,6 +302,10 @@ def session_page():
         time.sleep(1)
         st.rerun()
 
+
+#########
+# 페이지 설정 : 초기 페이지는 세팅 페이지 / 페이지 세션 상태 변경으로 이동
+#########
 
 if "page" not in st.session_state:
     st.session_state.page = "settings"
