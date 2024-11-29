@@ -100,7 +100,7 @@ def script_maker(INPUT: str):
         if web_docs[0].metadata["title"]:
             title = web_docs[0].metadata["title"]
         else:
-            title = ""
+            title = ''
         docs = f"title : {title} \n\n" + web_docs[0].page_content
     else:
         docs = str(INPUT)
