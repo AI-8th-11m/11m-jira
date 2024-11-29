@@ -1,5 +1,7 @@
 import os
+import time
 import openai
+import streamlit as st
 from openai import OpenAI
 from operator import itemgetter
 from langchain_chroma import Chroma
@@ -150,7 +152,6 @@ def history_chain(chain, memory_store: dict):
     """
 
     def get_session_history(session_ids):
-        print(f"[대화 세션ID]: {session_ids}")
         if session_ids not in memory_store:  # 세션 ID가 store에 없는 경우
             # 새로운 ChatMessageHistory 객체를 생성하여 store에 저장
             memory_store[session_ids] = ChatMessageHistory()
@@ -164,3 +165,65 @@ def history_chain(chain, memory_store: dict):
         history_messages_key="chat_history",  # 기록 메시지의 키
     )
     return rag_with_history
+
+def stream_data(text):
+    for word in text.split(" "):  # 공백 기준으로 문장을 단어 단위로 나누기
+        yield word + " "
+        time.sleep(0.2)
+
+def streamlit_chain(script, history, language='korean'):
+    """
+    스크립트를 바탕으로 대화를 이어나가는 llm chain 생성
+
+    Parameters:
+        script : 선택된 스크립트
+    Returns:
+        llm chain
+    """
+    message = "\n".join([f"{item['role']}: {item['content']}" for item in history])
+    prompt = PromptTemplate.from_template(
+        """
+    persona : story teller
+    language : only {language}
+    tell dramatic story like talking to friend,
+    speak informally,
+    progress chapter by chapter,
+    do not repeat same chapter,
+    **hide header like '###'**,
+    at first chapter give hook question like movie or tv show, 
+    finish chapter with interesting rhetorical question,
+    wait user answer,
+    give reaction to answer,
+    do not use same reaction or same question,
+    end of the script give no question and wrap up the story,
+    notice if story finished and give message '종료하려면 exit'
+
+    # script
+    {script}
+
+    #Previous Chat History:
+    {chat_history}
+
+    #Question: 
+    {question} 
+    """
+    )
+
+    llm = ChatOpenAI(model="gpt-4o-mini", api_key=openai.api_key, temperature=0.3)
+
+    # 단계 8: 체인(Chain) 생성
+    chain = (
+        RunnableMap(
+            {
+                "language": lambda inputs: language,  # language는 고정값으로 전달
+                "script": lambda inputs: script,  # script는 고정값으로 전달
+                "chat_history": lambda inputs: message,  # 입력에서 chat_history 추출
+                "question": itemgetter("question"),  # 입력에서 question 추출
+            }
+        )
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return chain
+
