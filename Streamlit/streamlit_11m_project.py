@@ -86,7 +86,7 @@ elif st.session_state.page == "chat":
 
 
     # 중앙 정렬
-    col1, col2, col3 = st.columns([1, 15, 1])
+    col1, col2, col3 = st.columns([1, 17, 1])
     with col2:
         # st.title("채팅 화면")
 
