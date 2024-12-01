@@ -48,7 +48,7 @@ def title_json_data(json_files):
         json_files (list): JSON 파일 경로 리스트
 
     Returns:
-        list: 파일 데이터에서 'title'과 'content'를 읽어 특정 형식으로 변환한 리스트
+        list: 파일 데이터에서 'title'을 읽어 특정 형식으로 변환한 리스트
     """
     all_json_data = []
     for file_path in json_files:
