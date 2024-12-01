@@ -173,7 +173,7 @@ def stream_data(text):
     Parameters:
         text : 스트림 형식으로 출력할 텍스트
     Returns:
-        memory history chain
+        스트림 형식 출력
     """
     for word in text.split(" "):  # 공백 기준으로 문장을 단어 단위로 나누기
         yield word + " "
