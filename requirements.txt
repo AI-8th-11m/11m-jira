@@ -11,3 +11,6 @@ transformers==4.37.0
 beautifulsoup4==4.12.3
 pydantic==2.10.2
 streamlit==1.40.2
+
+pydub==0.25.1
+ffmpeg-python==0.2.0
