@@ -1,5 +1,9 @@
 import os
+import time
 import openai
+import random
+import threading
+import streamlit as st
 from openai import OpenAI
 from langchain_openai import ChatOpenAI
 from langchain_core.documents import Document
@@ -39,8 +43,9 @@ def generate_script(summaries):
     use input,
     refer to sample,
     write about time, character, event,
-    write only fact
-    ignore the mere listing of facts and write N/A
+    write only fact,
+    ignore the mere listing of facts and write N/A,
+    if input is None write '문서가 비어있습니다. URL을 확인해주세요.'
  
     <sample>
     # title : title of script
@@ -86,7 +91,16 @@ def generate_script(summaries):
 
 
 def script_maker(INPUT: str):
-    print("다소 시간이 소요될 수 있습니다.")
+    """
+    사용자가 입력한 데이터로
+    대화 LLM이 전달할 이야기의 대본 생성
+
+    Parameters:
+        INPUT : URL 또는 텍스트 데이터
+
+    Returns:
+        텍스트 데이터
+    """
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=1000, chunk_overlap=100
     )
@@ -96,11 +110,12 @@ def script_maker(INPUT: str):
         if web_docs[0].metadata["title"]:
             title = web_docs[0].metadata["title"]
         else:
-            title = ""
+            title = ''
         docs = f"title : {title} \n\n" + web_docs[0].page_content
     else:
         docs = str(INPUT)
     documents = [Document(page_content=docs)]
     SPLITS = text_splitter.split_documents(documents)
     refined = documents_filter(SPLITS)
-    return generate_script(refined)
+    new_script = generate_script(refined)
+    return new_script

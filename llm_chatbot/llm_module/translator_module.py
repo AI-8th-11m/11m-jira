@@ -8,11 +8,13 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 def translator(TEXT, LANG_CODE='kor_Hang'):
     """
-    LANG_CODE: >-
-    eng_Latn,
-    jpn_Jpan,
-    kor_Hang,
-    spa_Latn
+    텍스트 다국어 번역
+
+    Parameters :
+
+    LANG_CODE: eng_Latn, jpn_Jpan, kor_Hang, spa_Latn
+
+    Returns : 번역되 텍스트
     """
     model_name = "facebook/nllb-200-distilled-600M"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
