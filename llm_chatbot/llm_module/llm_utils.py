@@ -177,7 +177,7 @@ def stream_data(text):
     """
     for word in text.split(" "):  # 공백 기준으로 문장을 단어 단위로 나누기
         yield word + " "
-        time.sleep(0.2)
+        time.sleep(0.1)
 
 def streamlit_chain(script, history, language='korean'):
     """
