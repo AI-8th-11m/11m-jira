@@ -63,7 +63,7 @@ pip install -r requirements.txt
 
 ### 5. 챗봇 실행
 ```
-streamlit run app.py
+streamlit run app_mk2.py
 ```
 streamlit 서버가 실행되면 브라우저에서 챗봇과 대화를 시작할 수 있습니다.
 
@@ -79,6 +79,17 @@ streamlit 서버가 실행되면 브라우저에서 챗봇과 대화를 시작�
 - **IDE**: Visual Studio Code
 - **Framework**: Streamlit(UI), Langchain(대화흐름 관리)
 - **DBMS**: ChromaDB(벡터 데이터베이스)
+---
+## Key summary
+- **이야기를 들려주는 챗봇**        
+  - 단순 요약이 아닌, 이야기를 실제로 전달하는 것처럼 동작
+  - 긴 이야기를 적절히 요약    
+  - 없는 정보를 지어서는 안 됨        
+
+- **사용자와 상호작용하는  챗봇**
+  - 사용자의 반응을 이끌어냄     
+  - 사용자의 반응에 적절하게 대응함    
+
 ---
 ## 서비스 구조
 - **시나리오1**
@@ -129,11 +140,11 @@ streamlit 서버가 실행되면 브라우저에서 챗봇과 대화를 시작�
 ```
 Project/
 ├── llm_chatbot/
-│   ├── chatbot.py (챗봇 작동 로직)
-│   ├── docs_utills.py (데이터 전처리)
-│   ├── script_utils.py (챗봇 대본 관리)
-│   ├── db_utils.py (데이터베이스와 상호작용)
-│   └── translator_module.py (다국어 지원)
+│   ├── chatbot.py 
+│   ├── docs_utills.py 
+│   ├── script_utils.py 
+│   ├── db_utils.py 
+│   └── translator_module.py 
 ├── documents/
 │   ├── filtered_unsolved_cases.json
 │   └── korea_crime.json
@@ -141,12 +152,97 @@ Project/
 │   └── script_db/
 │       ├── chroma.sqlite3
 │       └── index/
-├── main.py (스트림릿 실행파일)
+├── app_mk2.py 
 ├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
 ---
+## 와이어프레임
+![와이어프레임](frame.png)
+---
 
-## 트러블 슈팅
-설치 또는 실행 과정에서 생기는 문제에 대한 트러블 슈팅을 입력해주세요
+## 주요 트러블 슈팅
+<details><summary>스크립트 생성 프롬프트</summary>
+- 소설의 구성 방법 참고해 적용
+- 불필요한 내용은 피해서 작성하도록 유도
+- 과도하게 요약하여 내용이 빈약한 경우 방지 : 최소 3000토큰 지정
+- 할루시네이션 방지
+
+```python
+   persona = script writer
+    language = only in korean
+    least 3000 tokens
+    use input,
+    refer to sample,
+    write about time, character, event,
+    write only fact
+    ignore the mere listing of facts and write N/A
+ 
+    <sample>
+    # title : title of script
+    # prologue 1 : song, movie, book, show about subject
+    - coontent :
+    # prologue 2 : explain about subject
+    - coontent :
+    # prologue 3 : explain about character
+    - coontent :
+    # exposition 1 : historical background of subject
+    - coontent :
+    # exposition 2 : history of character
+    - coontent :
+    # exposition 3 : beginning of event
+    - coontent :
+    # development 1 : situation, action, static of character
+    - coontent :
+    # development 2 : influence of event
+    - coontent :
+    # development 3 : reaction of people
+    - coontent :
+    # climax 1 : event and effect bigger
+    - coontent :
+    # climax 2 : dramatic action, conflict
+    - coontent :
+    # climax 3 : falling Action
+    - coontent :
+    # denouement : resolution
+    - coontent :
+    # epilogue : message, remaining
+    - coontent :
+    </sample>
+
+    <input>
+    {summaries}
+    </input>Chatbot 프롬프트 고도화
+```
+</details>
+
+
+<details><summary>챗봇 프롬프트</summary>
+- 사용자의 답변에 맞춰 진행하도록 유도
+- 스크립트에 적힌 헤더 등 기호가 노출되던 문제 수정
+- 친근한 말투로 수정  
+```python
+persona : story teller
+    language : only korean
+    tell dramatic story like talking to friend,
+    speak informally,
+    progress chapter by chapter,
+    **hide header like '###'**,
+    start chapter with interesting question,
+    wait user answer
+    give reaction to answer,
+    do not use same reaction
+    
+    # script
+    {script}
+
+    #Previous Chat History:
+    {chat_history}
+
+    #Question: 
+    {question} 
+```
+</details>  
+
+전체 트러블슈팅 목록 링크: [트러블슈팅](https://www.notion.so/teamsparta/20efe511e121467cae1a910439eb163b?v=f61696500217417391270ff6ba0a517e)

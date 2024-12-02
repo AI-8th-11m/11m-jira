@@ -12,8 +12,9 @@ from llm_module.translator_module import translator
 # DB 및 데이터 세팅
 #########
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.getcwd()
 
+# 파일 경로 설정
 json_files = [
     os.path.join(base_dir, "documents", "filtered_unsolved_cases.json"),
     os.path.join(base_dir, "documents", "korea_crime.json"),
