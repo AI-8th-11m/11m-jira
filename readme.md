@@ -163,65 +163,71 @@ Project/
 ---
 
 ## 주요 트러블 슈팅
-<details><summary>스크립트 생성 프롬프트</summary>
+
+<details>
+<summary>스크립트 생성 프롬프트</summary>
+
 - 소설의 구성 방법 참고해 적용
 - 불필요한 내용은 피해서 작성하도록 유도
 - 과도하게 요약하여 내용이 빈약한 경우 방지 : 최소 3000토큰 지정
 - 할루시네이션 방지
 
 ```python
-   persona = script writer
-    language = only in korean
-    least 3000 tokens
-    use input,
-    refer to sample,
-    write about time, character, event,
-    write only fact
-    ignore the mere listing of facts and write N/A
- 
-    <sample>
-    # title : title of script
-    # prologue 1 : song, movie, book, show about subject
-    - coontent :
-    # prologue 2 : explain about subject
-    - coontent :
-    # prologue 3 : explain about character
-    - coontent :
-    # exposition 1 : historical background of subject
-    - coontent :
-    # exposition 2 : history of character
-    - coontent :
-    # exposition 3 : beginning of event
-    - coontent :
-    # development 1 : situation, action, static of character
-    - coontent :
-    # development 2 : influence of event
-    - coontent :
-    # development 3 : reaction of people
-    - coontent :
-    # climax 1 : event and effect bigger
-    - coontent :
-    # climax 2 : dramatic action, conflict
-    - coontent :
-    # climax 3 : falling Action
-    - coontent :
-    # denouement : resolution
-    - coontent :
-    # epilogue : message, remaining
-    - coontent :
-    </sample>
+persona = script writer
+language = only in korean
+least 3000 tokens
+use input,
+refer to sample,
+write about time, character, event,
+write only fact
+ignore the mere listing of facts and write N/A
 
-    <input>
-    {summaries}
-    </input>Chatbot 프롬프트 고도화
+<sample>
+# title : title of script
+# prologue 1 : song, movie, book, show about subject
+- content :
+# prologue 2 : explain about subject
+- content :
+# prologue 3 : explain about character
+- content :
+# exposition 1 : historical background of subject
+- content :
+# exposition 2 : history of character
+- content :
+# exposition 3 : beginning of event
+- content :
+# development 1 : situation, action, static of character
+- content :
+# development 2 : influence of event
+- content :
+# development 3 : reaction of people
+- content :
+# climax 1 : event and effect bigger
+- content :
+# climax 2 : dramatic action, conflict
+- content :
+# climax 3 : falling Action
+- content :
+# denouement : resolution
+- content :
+# epilogue : message, remaining
+- content :
+</sample>
+
+<input>
+{summaries}
+</input>Chatbot 프롬프트 고도화
 ```
 </details>
 
 
-<details><summary>챗봇 프롬프트</summary>
-- 사용자의 답변에 맞춰 진행하도록 유도
-- 스크립트에 적힌 헤더 등 기호가 노출되던 문제 수정
-- 친근한 말투로 수정  
+<details>
+<summary>챗봇 프롬프트</summary>
+
+- 사용자의 답변에 맞춰 진행
+- 스크립트에 적힌 헤더 등 기호 노출문제 수정
+- 친근한 말투로 수정
+
 ```python
 persona : story teller
     language : only korean
@@ -243,6 +249,7 @@ persona : story teller
     #Question: 
     {question} 
 ```
-</details>  
+</details>
+   
 
-전체 트러블슈팅 목록 링크: [트러블슈팅](https://www.notion.so/teamsparta/20efe511e121467cae1a910439eb163b?v=f61696500217417391270ff6ba0a517e)
+- 전체 트러블슈팅 목록 링크: [11m 트러블슈팅](https://www.notion.so/teamsparta/20efe511e121467cae1a910439eb163b?v=f61696500217417391270ff6ba0a517e)
