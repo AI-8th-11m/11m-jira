@@ -17,7 +17,7 @@ json_files = [
     "./llm_chatbot/documents/korea_crime.json",
 ]
 titles = title_json_data(json_files)
-sample_titles = titles[0:11]
+sample_titles = titles[0:51]
 path = "./llm_chatbot/db/script_db"
 db_name = "script_db"
 script_db = load_vstore(db_name, path)
