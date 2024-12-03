@@ -53,7 +53,9 @@
 - **이야기 생성 기능**:
   - 사용자가 제공한 URL이나 텍스트를 바탕으로 새로운 이야기를 생성 및 저장
 ![create](img/create.gif)
-
+- **텍스트 음성 출력 기능**
+    - 텍스트를 음성으로 들려주어 몰입도 향상 및 사용자 편의 증가
+    
 - **대화 히스토리 관리**:
   - langchain을 사용하여 대화 맥락을 기억하고 유지하여 자연스러운 대화를 이어나감
   <details><summary>langchain의 특징</summary>
@@ -165,6 +167,7 @@ streamlit 서버가 실행되면 브라우저에서 챗봇과 대화를 시작�
 | **script_utils**    | 사용자 입력 데이터를 바탕으로 스크립트를 생성하고 저장.                                                    | LLM을 활용해 소설 구성 형식의 스토리 스크립트 생성 및 DB에 저장.                                       |
 | **llm_utils**       | LLM과의 대화를 위한 메모리 관리 및 대화 흐름 유지.                                                        | 대화 맥락 유지, 사용자 입력 평가, LLM과의 상호작용.                                                 |
 | **translator_module** | 다국어 번역 지원.                                                                                      | 텍스트 번역 기능을 통해 여러 언어로 대화 지원.                                                       |
+| **voice_outpt_model**|텍스트 음성을 생성 및 출력                                                                                |사용자에게 음성을 제공하여 몰입도 향상 및 사용자 범위 확대
 | **Streamlit App**   | 사용자 인터페이스 구현 및 페이지 이동 관리.                                                               | 설정, 체크, 생성, 채팅, 세션 관리 페이지를 통해 앱의 흐름을 컨트롤.                                    |
 | **Conversation Memory** | 대화 내용을 Session State 또는 LangChain 메모리에 저장.                                               | 대화 히스토리와 컨텍스트를 기반으로 연속적인 대화 경험 제공.                                           |
 | **Chroma DB**       | 벡터 검색을 위한 데이터베이스 관리.                                                                       | 검색 정확도를 높이기 위해 문서 데이터를 벡터화하여 저장 및 검색.                                       |
@@ -1060,24 +1063,31 @@ streamlit 서버가 실행되면 브라우저에서 챗봇과 대화를 시작�
 
 ## 프로젝트 파일 구조
 ```
-Project/
-├── llm_chatbot/
-│   ├── chatbot.py 
-│   ├── docs_utills.py 
-│   ├── script_utils.py 
-│   ├── db_utils.py 
-│   └── translator_module.py 
-├── documents/
-│   ├── filtered_unsolved_cases.json
-│   └── korea_crime.json
-├── db/
-│   └── script_db/
-│       ├── chroma.sqlite3
-│       └── index/
-├── app_mk3.py 
-├── .gitignore
+11m-jira/
+├── app/
+│   ├── pages/
+│   │   ├── settings.py
+│   │   ├── chat.py
+│   │   ├── create.py
+│   │   └── session.py
+│   └── app.py
+├── modules/
+│   ├── docs_utils.py
+│   ├── db_utils.py
+│   ├── script_utils.py
+│   ├── llm_utils.py
+│   ├── translator_module.py
+│   ├── voice_output_module.py
+│   └── memory.py
+├── data/
+│   ├── db/
+│   │   ├── chroma/
+│   │   └── embeddings/
+│   └── json/
+├── requirements.txt
 ├── README.md
-└── requirements.txt
+└── LICENSE
+
 ```
 ---
 ## 와이어프레임
