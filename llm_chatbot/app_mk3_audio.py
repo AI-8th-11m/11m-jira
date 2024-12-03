@@ -26,7 +26,6 @@ sample_titles = titles[0:51]
 path = os.path.join(base_dir, "llm_chatbot", "db", "script_db")
 db_name = "script_db"
 script_db = load_vstore(db_name, path)
-LANG_CODE = False
 
 #########
 # 세션 세팅 : 앱이 동작하는 동안 유지될 정보들 보관
@@ -42,6 +41,8 @@ if "conversation" not in st.session_state:
     st.session_state["conversation"] = {}
 if "new_script" not in st.session_state:
     st.session_state["new_script"] = False
+if "lang_code" not in st.session_state:
+    st.session_state["lang_code"] = False
 
 #########
 # 사이드바 : 제목 리스트, 세션 리스트
@@ -105,6 +106,12 @@ def setting_page():
             st.session_state["current_session_id"] = session_id
             st.session_state["session_list"].append({"id": session_id})
             st.session_state.LANG = language
+            if st.session_state.LANG == "한국어":
+                st.session_state["lang_code"] = False
+            elif st.session_state.LANG == "English":
+                st.session_state["lang_code"] = "eng_Latn"
+            elif st.session_state.LANG == "日本語":
+                st.session_state["lang_code"] = "jpn_Jpan"
             st.session_state.current_session = session_id
             st.session_state.page = "check"
             st.rerun()
@@ -247,8 +254,8 @@ def chat_page(script):
             st.session_state.page = "settings"
             st.rerun()
 
-        # elif LANG_CODE:
-        #     prompt = translator(prompt, LANG_CODE)
+        elif st.session_state['lang_code']:
+            prompt = translator(prompt, st.session_state['lang_code'])
 
         st.session_state.messages.append({"role": "user", "content": prompt})
         prompt = stream_data(prompt)
@@ -305,8 +312,8 @@ def session_page():
             st.session_state.page = "settings"
             st.rerun()
 
-        # elif LANG_CODE:
-        #     prompt = translator(prompt, LANG_CODE)
+        elif st.session_state['lang_code']:
+            prompt = translator(prompt, st.session_state['lang_code'])
 
         st.session_state.messages.append({"role": "user", "content": prompt})
         prompt = stream_data(prompt)
