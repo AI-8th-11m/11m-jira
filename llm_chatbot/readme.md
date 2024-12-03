@@ -4,12 +4,15 @@
 ## 패키지 버전 관리
 
 ```bash
+
 torch==2.5.1
 numpy==1.26.4
+pydub==0.25.1
 openai==1.55.2
 pydantic==2.10.2
 langchain==0.3.9
 streamlit==1.40.2
+ffmpeg-python==0.2.0
 transformers==4.37.0
 langchain-core==0.3.21
 beautifulsoup4==4.12.3
