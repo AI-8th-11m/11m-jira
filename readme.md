@@ -1071,14 +1071,12 @@ streamlit 서버가 실행되면 브라우저에서 챗봇과 대화를 시작�
 │   ├── db_utils.py
 │   ├── script_utils.py
 │   ├── llm_utils.py
-│   ├── translator_module.py
-│   ├── voice_output_module.py
-│   └── memory.py
-├── data/
-│   ├── db/
-│   │   ├── chroma/
-│   │   └── embeddings/
-│   └── json/
+│   └──  translator_module.py
+│     
+├── db/
+│   └── script_db/
+│   
+├── documents/ 
 ├── requirements.txt
 ├── README.md
 └── LICENSE
